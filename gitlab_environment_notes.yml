@@ -1,0 +1,33 @@
+environments and deployment.
+
+# have this env information in the pipline.
+# have an overview of which version deployed to which environment.
+# link directly to the deployment endpoint.
+# Gitlab wants to offer or have integration for all the parts of a complete ci/cd pipline.
+
+# environment
+# Define the Environment that a job deploys to 
+# deploy_to_dev:
+#     stage: deploy 
+#     tags:
+#      - ec2
+#      - shell
+#      - remote
+#     before_script:
+#      - chmod 400 #$SSH_PRIVATE_KEY
+#     script:
+#     #  - kubectl apply -f deployment.yaml
+#       - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ubuntu@35.180.46.122 
+#       - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && 
+#         Docker run -d -p 3000:3000 $IMAGE_NAME:$IMAGE_TAG
+      
+#       # - ssh -o -i $SSH_PRIVATE_KEY ubuntu@$SERVER_HOST
+#     environment:
+#       name: dev
+#       # url: http://$DEV_SERVER_HOST:3000 # we can give public dns with port and ip with port like this 10.21.125.251:3001
+#       url: $DEV_ENDPOINT
+
+
+# if no environment with that name exists, a new one is created.
+# Gitlab provides a full history of deployments of each environment.
+# you always know what is deployed on your servers.

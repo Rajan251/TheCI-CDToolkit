@@ -1,0 +1,51 @@
+# it useful when we want to run multiple containers.
+# example : my-app,database,authentication,billing.
+
+# docker-compose is tool to define and run multiple containers.
+# Everythings is defined in one yaml file.
+# you can spin everything up and tear it all down with just a single command.
+
+# create a docker-compose file 
+# configure the ci/cd pipline to deploy the application with docker-compose.
+# gitlab's integrated code editor.
+# define the list of services (or containers) we want to run as part of our application.
+# ensure docker will install on system to run docker command.
+# we need to install docker compose to execute docker-compose command.
+
+# in case of docker-compose file we need to copy docker-compose file from the source to destination  mease gitlab runner to the server machine.
+# if we use variable in docker compose like this
+
+# docker-compose file
+
+# version: "3.3"
+# services:
+#   app:
+#     image: registry.gitlab.com/username/projectname:1.0  # what image we want to deploy.
+#     image: ${IMAGE_NAME}:${IMAGE_TAG}
+#      ports:
+#       - 3000:3000
+
+# in this case we need to do export IMAGE_NAME = registry.gitlab.com/username/projectname
+# export IMAGE_TAG = 1.0
+# it will done in the deployment part before docker-compose up && docker-compose down like this
+
+deploy_to_dev:
+    stage: deploy 
+    tags:
+     - ec2
+     - shell
+     - remote
+    before_script:
+     - chmod 400 #$SSH_PRIVATE_KEY
+    script:
+    #  - kubectl apply -f deployment.yaml
+      - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ubuntu@35.180.46.122 
+      - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && 
+        Docker run -d -p 3000:3000 $IMAGE_NAME:$IMAGE_TAG # in this also we need to stop and rm container or image then do run container.
+        # export IMAGE_NAME=$IMAGE_NAME &&
+        # export IMAGE_TAG=$IMAGE_TAG &&
+        # if we mention in the varible so we can simply call variable
+      - docker-compose -f docker-compose.yaml  down && docker-compose -f docker-compose.yaml up -d # in that case if we have docker-compose file.
+      
+      # - ssh -o -i $SSH_PRIVATE_KEY ubuntu@$SERVER_HOST
+
